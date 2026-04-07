@@ -41,7 +41,6 @@ Põhistsenaariumid:
 ## Figma
 Projektidokumendis on viide Figma prototüübile. GitHubi repositooriumis tasub lisada:
 - otselink Figma failile;
-- vähemalt mõned ekraanipildid `assets/` kausta.
 
 ## Jira ja tööjaotus
 Projektis on kasutatud Jira tööde jaotamiseks. Repositooriumis võib lisada:
