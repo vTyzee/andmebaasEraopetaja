@@ -80,7 +80,7 @@ Kontrollnimekiri enne repositooriumi üleslaadimist.
 
 1. Loo GitHubis uus repositoorium.
 2. Laadi üles kõik selle kausta failid.
-3. Impordi andmebaasi loomiseks fail `database/schema.sql`.
+3. Impordi andmebaasi loomiseks fail `database/tutor_platform.sql`.
 4. Impordi kasutajate ja õiguste jaoks `database/permissions.sql`.
 5. Impordi vaadete ja funktsiooni jaoks `database/views_and_function.sql`.
 6. Vajadusel lisa projekti lõplik Figma link, Jira link ja andmebaasi eksport.
