@@ -1,0 +1,31 @@
+# GitHubi üleslaadimise kontrollnimekiri
+
+## Kohustuslikud failid
+- [x] `README.md`
+- [x] `database/schema.sql`
+- [x] `database/permissions.sql`
+- [x] `database/views_and_function.sql`
+- [x] dokumentatsiooni failid `docs/` kaustas
+- [x] algne PDF fail `docs/source/`
+
+## Soovitatavad lisad
+- [x] diagrammide pildid `assets/` kaustas
+- [ ] Figma link README-sse
+- [ ] Jira link README-sse või `docs/05-arhitektuur-ja-protsess.md`
+- [ ] lõplik andmebaasi eksport
+- [ ] meeskonnaliikmete nimed ja tööjaotus
+
+## Enne üleslaadimist kontrolli üle
+- kas faili- ja kaustanimed on loogilised;
+- kas README avaneb GitHubis korrektselt;
+- kas SQL failid on eraldi ja loetavad;
+- kas kõik lingid töötavad;
+- kas pildid on olemas;
+- kas ei ole üles laaditud üleliigseid ajutisi faile.
+
+## Soovitus commitide jaoks
+Näited headest commit-sõnumitest:
+- `Add initial project documentation`
+- `Add database schema and permissions`
+- `Add diagrams and assets`
+- `Update README and project structure`

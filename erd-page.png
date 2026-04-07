@@ -1,0 +1,117 @@
+-- Eraõpetajate otsingu teenus
+-- GitHubi jaoks korrastatud ja ühtlustatud skeem
+-- Märkus: SQL on koostatud projektidokumendi põhjal ja nimed on ühtlustatud.
+
+CREATE DATABASE IF NOT EXISTS tutor_platform;
+USE tutor_platform;
+
+CREATE TABLE IF NOT EXISTS roles (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    role_id INT NOT NULL,
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    status ENUM('active', 'blocked') NOT NULL DEFAULT 'active',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_users_role
+        FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+
+CREATE TABLE IF NOT EXISTS teacher_profile (
+    teacher_id INT PRIMARY KEY,
+    bio TEXT,
+    experience_years INT NOT NULL DEFAULT 0,
+    price_per_hour DECIMAL(8,2) NOT NULL,
+    rating DECIMAL(3,2) NULL,
+    CONSTRAINT fk_teacher_user
+        FOREIGN KEY (teacher_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS student_profile (
+    student_id INT PRIMARY KEY,
+    CONSTRAINT fk_student_user
+        FOREIGN KEY (student_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS subjects (
+    subject_id INT AUTO_INCREMENT PRIMARY KEY,
+    subject_name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS teacher_subjects (
+    teacher_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    PRIMARY KEY (teacher_id, subject_id),
+    CONSTRAINT fk_teacher_subjects_teacher
+        FOREIGN KEY (teacher_id) REFERENCES teacher_profile(teacher_id),
+    CONSTRAINT fk_teacher_subjects_subject
+        FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+);
+
+CREATE TABLE IF NOT EXISTS lessons (
+    lesson_id INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id INT NOT NULL,
+    student_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    lesson_datetime DATETIME NOT NULL,
+    duration_minutes INT NOT NULL,
+    status ENUM('planned', 'confirmed', 'cancelled', 'completed') NOT NULL DEFAULT 'planned',
+    price DECIMAL(8,2) NOT NULL,
+    CONSTRAINT fk_lessons_teacher
+        FOREIGN KEY (teacher_id) REFERENCES teacher_profile(teacher_id),
+    CONSTRAINT fk_lessons_student
+        FOREIGN KEY (student_id) REFERENCES student_profile(student_id),
+    CONSTRAINT fk_lessons_subject
+        FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    lesson_id INT NOT NULL,
+    amount DECIMAL(8,2) NOT NULL,
+    payment_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'paid', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
+    CONSTRAINT fk_payments_lesson
+        FOREIGN KEY (lesson_id) REFERENCES lessons(lesson_id)
+);
+
+CREATE TABLE IF NOT EXISTS reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    lesson_id INT NOT NULL UNIQUE,
+    rating INT NOT NULL,
+    comment TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_reviews_rating CHECK (rating BETWEEN 1 AND 5),
+    CONSTRAINT fk_reviews_lesson
+        FOREIGN KEY (lesson_id) REFERENCES lessons(lesson_id)
+);
+
+CREATE TABLE IF NOT EXISTS documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id INT NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    verification_status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+    uploaded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_documents_teacher
+        FOREIGN KEY (teacher_id) REFERENCES teacher_profile(teacher_id)
+);
+
+CREATE TABLE IF NOT EXISTS logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    action VARCHAR(100),
+    entity_type VARCHAR(100),
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ip_address VARCHAR(45),
+    details TEXT,
+    CONSTRAINT fk_logs_user
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
