@@ -1,1 +1,160 @@
+# Kuidas projekti käivitada
 
+## Oluline märkus
+
+See repositoorium sisaldab **andmebaasi projekti ja dokumentatsiooni**, mitte valmis veebirakenduse lähtekoodi.
+Seega selle projekti "käivitamine" tähendab peamiselt:
+
+1. MySQL andmebaasi loomist;
+2. SQL-skriptide importimist;
+3. tabelite, vaadete ja funktsioonide kontrollimist;
+4. soovi korral päringute testimist phpMyAdminis või MySQL Workbenchis.
+
+## Mida on vaja
+
+- MySQL Server 8.x
+- phpMyAdmin **või** MySQL Workbench
+- see GitHubi repositoorium alla laadituna
+
+## Projekti failid
+
+- `database/schema.sql` – tabelite loomine
+- `database/permissions.sql` – kasutajad ja õigused
+- `database/views_and_function.sql` – vaated ja funktsioon
+
+## Variant A – käivitamine phpMyAdminiga
+
+### 1. Loo andmebaas
+Ava phpMyAdmin ja loo uus andmebaas nimega:
+
+```sql
+CREATE DATABASE tutor_platform;
+```
+
+Soovituslik märgistik:
+- `utf8mb4`
+- `utf8mb4_unicode_ci`
+
+### 2. Impordi skeem
+Vali andmebaas `tutor_platform` ja impordi fail:
+
+- `database/schema.sql`
+
+See loob kõik põhitabelid.
+
+### 3. Impordi õigused
+Pärast skeemi loomist impordi:
+
+- `database/permissions.sql`
+
+See loob andmebaasi kasutajad ja määrab õigused.
+
+### 4. Impordi vaated ja funktsioon
+Seejärel impordi:
+
+- `database/views_and_function.sql`
+
+See lisab vaated ja funktsiooni.
+
+### 5. Kontrolli, kas kõik loodi
+Pärast importi peaksid olema olemas näiteks järgmised tabelid:
+
+- `users`
+- `role_type`
+- `teacher_profile`
+- `student_profile`
+- `subjects`
+- `teacher_subjects`
+- `lessons`
+- `payments`
+- `reviews`
+- `documents`
+- `logs`
+
+## Variant B – käivitamine MySQL Workbenchiga
+
+### 1. Ava ühendus MySQL serveriga
+Logi sisse oma lokaalsesse MySQL serverisse.
+
+### 2. Loo andmebaas
+Käivita:
+
+```sql
+CREATE DATABASE tutor_platform;
+USE tutor_platform;
+```
+
+### 3. Käivita failid õiges järjekorras
+Käivita järgmised failid selles järjekorras:
+
+1. `database/schema.sql`
+2. `database/permissions.sql`
+3. `database/views_and_function.sql`
+
+## Kiire kontroll
+
+Pärast importi proovi näiteks järgmisi päringuid.
+
+### Kontrolli tabeleid
+```sql
+USE tutor_platform;
+SHOW TABLES;
+```
+
+### Kontrolli õpetajate vaadet / keskmist hinnet
+```sql
+SELECT * FROM average_rating_view;
+```
+
+> Kui vaate nimi sinu failis on teistsugune, kasuta seda nime, mis on SQL-failis tegelikult defineeritud.
+
+### Kontrolli tulevasi tunde
+```sql
+SELECT * FROM upcoming_lessons_view;
+```
+
+### Kontrolli funktsiooni
+```sql
+SELECT get_teacher_average_rating(1);
+```
+
+## Kui midagi ei tööta
+
+### 1. Õiguste fail annab vea
+Kui `CREATE USER` või `GRANT` käsud annavad vea, siis:
+- veendu, et kasutad MySQL serverit administraatori õigustega;
+- vajadusel kommenteeri need read ajutiselt välja, kui õpetajal on vaja ainult skeemi näha.
+
+### 2. Nimetused ei klapi
+Algdokumendis on mõnes kohas nimetuste erinevusi, näiteks:
+- `Roles` vs `role_type`
+- `Tutors` vs `teacher_profile`
+- `Students` vs `student_profile`
+
+Kui importimisel tekib viga, kontrolli, et kõik `FOREIGN KEY` viited kasutavad samu tabelinimesid nagu `schema.sql` failis.
+
+### 3. Vaated ei tööta
+Kui vaadete loomisel tuleb viga, siis kontrolli:
+- kas kõik tabelid loodi enne ära;
+- kas veerunimed on samad, mis skeemis;
+- kas funktsioon või vaade viitab olemasolevale tabelile.
+
+## Mida saab õpetajale näidata
+
+Kui sinult küsitakse, kuidas projekt töötab, siis võid öelda nii:
+
+- projekt on relatsioonandmebaasil põhinev infosüsteemi mudel;
+- käivitamine toimub MySQL-is SQL-skriptide kaudu;
+- skeem loob tabelid, seosed, võtmed ja piirangud;
+- eraldi fail loob kasutajad ja õigused;
+- eraldi fail lisab vaated ja funktsiooni analüüsi ning mugavama kasutuse jaoks.
+
+## Kokkuvõte
+
+Selle projekti käivitamiseks piisab sellest, et:
+
+1. lood MySQL-is andmebaasi `tutor_platform`;
+2. impordid `schema.sql`;
+3. impordid `permissions.sql`;
+4. impordid `views_and_function.sql`;
+5. kontrollid tulemusi `SHOW TABLES` ja `SELECT` päringutega.
