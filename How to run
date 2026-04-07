@@ -18,7 +18,7 @@ Seega selle projekti "käivitamine" tähendab peamiselt:
 
 ## Projekti failid
 
-- `database/schema.sql` – tabelite loomine
+- `database/tutor_platform.sql` – tabelite loomine
 - `database/permissions.sql` – kasutajad ja õigused
 - `database/views_and_function.sql` – vaated ja funktsioon
 
